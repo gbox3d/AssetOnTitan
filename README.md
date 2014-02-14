@@ -6,7 +6,9 @@ AssetOnTitan
 
 업데이터에 대한 자세한 기술지원은 gbox2@naver.com 으로 연락주시기 바랍니다.
 
-간편사용법
+-간편사용법
+
+서버측 하실일들..
 
 1. 업데이터 소스를 다운받는다.
 2. 압축을 푼다.
@@ -15,4 +17,16 @@ AssetOnTitan
 5. 예제처럼 하면 simulator 디랙토리가 만들어진다. 다시 이전 디랙토리로 나온다.
 6. node server.js 포트번호 저장소디랙토리이름으로 실행시킨다.
 (예> node server.js 58001 simulator) 
+
+
+클라이언트측 하실일들..
+
+먼 꼭 필요한 코도바 플러그인
+[ 'org.apache.cordova.console',
+  'org.apache.cordova.device',
+  'org.apache.cordova.file',
+  'org.apache.cordova.file-transfer' ]
+  
+  위와 같습니다.
+  
 
