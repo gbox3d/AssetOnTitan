@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Asset On Titan : update manager 1.0</title>
+
+
+    <script src="http://code.jquery.com/jquery.js" ></script>
+
+</head>
+<body>
+
+<div>
+    <input id="inp-baseurl" value="http://localhost:58090" >
+    <button id="btn-apply" >apply</button>
+</div>
+
+<div>
+    <button id="btn-svn"> svn update </button>
+    <button id="btn-config"> config update </button>
+    <button id="btn-reset"> reset update </button>
+</div>
+
+<div id="log"></div>
+
+<script>
+
+    var log_element = document.getElementById('log');
+    var base_url = document.querySelector('#inp-baseurl').value;
+
+
+    function print_log(strText) {
+
+        var eitem = document.createElement('p');
+        eitem.innerText = strText;
+        log_element.appendChild(eitem);
+
+    }
+
+    document.getElementById('btn-apply').addEventListener('click',function() {
+        base_url = document.querySelector('#inp-baseurl').value;
+    });
+
+    document.getElementById('btn-svn').addEventListener('click',function() {
+
+
+        print_log('connect server....');
+
+
+        $.ajax({
+            url: base_url + '/update_svn',
+            type: 'POST',
+            success: function(data, textStatus, jqXHR) {
+
+                console.log('success receive json data');
+                console.log( data );
+
+                data.stdout.forEach(function(item,i) {
+
+                    if(item != 'endof') {
+                        var eitem = document.createElement('p');
+                        eitem.innerText = item;
+                        log_element.appendChild(eitem);
+                    }
+
+
+                });
+
+                data.stderr.forEach(function(item,i) {
+
+                    if(item != 'endof') {
+                        var eitem = document.createElement('p');
+                        eitem.style.backgroundColor = 'red';
+                        eitem.innerText = item;
+
+                        log_element.appendChild(eitem);
+
+                    }
+
+
+                });
+
+
+
+
+            },
+            complete: function(jqXHR, textStatus) {
+                console.log('complete');
+
+            },
+            error: function(qXHR, textStatus, errorThrown) {
+                //$('#out').text('error');
+                console.log('error');
+            }
+        });
+    });
+
+    document.getElementById('btn-config').addEventListener('click',function() {
+
+        print_log('connect server....');
+        $.ajax({
+            url: base_url + '/config_upgrade',
+            type: 'POST',
+            success: function(data, textStatus, jqXHR) {
+
+                console.log('success receive json data');
+                console.log( data );
+
+                data.stdout.forEach(function(item,i) {
+
+                    if(item != 'endof') {
+                        var eitem = document.createElement('p');
+                        eitem.innerText = item;
+                        log_element.appendChild(eitem);
+                    }
+                });
+
+                data.stderr.forEach(function(item,i) {
+
+                    if(item != 'endof') {
+                        var eitem = document.createElement('p');
+                        eitem.style.backgroundColor = 'red';
+                        eitem.innerText = item;
+                        log_element.appendChild(eitem);
+                    }
+
+                });
+            },
+            complete: function(jqXHR, textStatus) {
+                console.log('complete');
+
+            },
+            error: function(qXHR, textStatus, errorThrown) {
+                //$('#out').text('error');
+                console.log('error');
+            }
+        });
+
+
+    });
+
+    document.getElementById('btn-reset').addEventListener('click',function() {
+
+        print_log('connect server....');
+        $.ajax({
+            url: base_url + '/config_reset',
+            type: 'POST',
+            success: function(data, textStatus, jqXHR) {
+
+                console.log('success receive json data');
+                console.log( data );
+
+                data.stdout.forEach(function(item,i) {
+
+                    if(item != 'endof') {
+                        var eitem = document.createElement('p');
+                        eitem.innerText = item;
+                        log_element.appendChild(eitem);
+                    }
+                });
+
+                data.stderr.forEach(function(item,i) {
+
+                    if(item != 'endof') {
+                        var eitem = document.createElement('p');
+                        eitem.style.backgroundColor = 'red';
+                        eitem.innerText = item;
+                        log_element.appendChild(eitem);
+                    }
+
+                });
+            },
+            complete: function(jqXHR, textStatus) {
+                console.log('complete');
+
+            },
+            error: function(qXHR, textStatus, errorThrown) {
+                //$('#out').text('error');
+                console.log('error');
+            }
+        });
+
+
+    })
+
+
+</script>
+
+
+</body>
+</html>
