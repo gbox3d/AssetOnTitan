@@ -11,11 +11,22 @@ var checklist_module = require('./node_modules/checklist');
 //파라메터값처리
 var gPort = 58090;
 
-var custom_port = process.argv[2];
+//node server.js 58001 myprj
+var custom_port = parseInt(process.argv[2]);
+var repository = process.argv[3]
+
 
 if(custom_port) {
-    gPort = custom_port;
+    gPort = parseInt(custom_port);
 }
+
+
+
+var theApp = {
+    port : gPort,
+    repository : repository,
+    src_path : './dev'
+};
 
 
 
@@ -84,7 +95,7 @@ http.createServer(function (req, res) {
 
         console.log(result.query);
 
-        child_proc.exec('svn update', function(err, stdout, stderr) {
+        child_proc.exec('svn update ' + theApp.src_path + '/' + theApp.repository, function(err, stdout, stderr) {
 
             response_console_result(res,stdout,stderr);
 
@@ -94,7 +105,7 @@ http.createServer(function (req, res) {
     else if(result.pathname == '/config_upgrade') {
 
         checklist_module.update_checklist({
-            src_dir:'repo',
+            src_dir:theApp.src_path,
             mode : 'upgrade',
             complete : function(evt) {
                 if(evt.result == 'ok') {
@@ -117,7 +128,7 @@ http.createServer(function (req, res) {
     else if(result.pathname == '/config_reset') {
 
         checklist_module.update_checklist({
-            src_dir:'repo',
+            src_dir: theApp.src_path,
             mode : 'reset',
             complete : function(evt) {
                 if(evt.result == 'ok') {
@@ -163,4 +174,6 @@ console.log('running at port :' + gPort);
 var connect = require(node_module_path + 'connect');
 connect.createServer(connect.static(__dirname)).listen(gPort + 1);
 
-console.log('start static webserver at '+ gPort + 1)
+console.log('start static webserver at '+ (gPort + 1));
+
+console.log('repository path : '+  theApp.src_path + '/' + theApp.repository);

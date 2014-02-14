@@ -9,17 +9,28 @@
 </head>
 <body>
 
-<button id="btn-svn"> svn update </button>
-<button id="btn-config"> config update </button>
-<button id="btn-reset"> reset update </button>
+<div>
+    <input id="inp-baseurl" value="http://localhost:58090" >
+    <button id="btn-apply" >apply</button>
+</div>
+
+<div>
+    <button id="btn-svn"> svn update </button>
+    <button id="btn-config"> config update </button>
+    <button id="btn-reset"> reset update </button>
+</div>
 
 <div id="log"></div>
 
 <script>
 
     var log_element = document.getElementById('log');
-    //var base_url = 'http://175.202.108.194:58090';
+<<<<<<< HEAD
+    var base_url = document.querySelector('#inp-baseurl').value;
+=======
+    
     var base_url = 'http://localhost:58090';
+>>>>>>> a7be2dee5153a7f781522576f908c5a0f226324b
 
 
     function print_log(strText) {
@@ -30,6 +41,9 @@
 
     }
 
+    document.getElementById('btn-apply').addEventListener('click',function() {
+        base_url = document.querySelector('#inp-baseurl').value;
+    });
 
     document.getElementById('btn-svn').addEventListener('click',function() {
 
