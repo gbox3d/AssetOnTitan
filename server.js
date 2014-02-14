@@ -25,7 +25,7 @@ if(custom_port) {
 var theApp = {
     port : gPort,
     repository : repository,
-    src_path : './dev'
+    src_path : 'dev'
 };
 
 
@@ -95,7 +95,7 @@ http.createServer(function (req, res) {
 
         console.log(result.query);
 
-        child_proc.exec('svn update ' + theApp.src_path + '/' + theApp.repository, function(err, stdout, stderr) {
+        child_proc.exec('svn update ' + './' + theApp.src_path + '/' + theApp.repository, function(err, stdout, stderr) {
 
             response_console_result(res,stdout,stderr);
 
