@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8" />
+
+    <title>titan update system launcher</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="./libs/mklib/css/mklib.css">
+
+    <!--<script src="cordova.js"></script>-->
+    <script src="jquery.js"></script>
+    <script src="launcher.js" ></script>
+    <script src="./libs/mklib/js/core.js"></script>
+
+    <style>
+        body {
+            margin: 0px;
+
+        }
+        .my-btn-cls {
+            width: 100px;
+            height: 50px;
+            margin-top: 5px;
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+
+<div id="btn-grp" style="position: absolute;top: 100px;left :50%;display: none;" >
+
+    <div style="position: relative;left: -50px;">
+        <button id='btn_launch' class="my-btn-cls"  > 시작하기 </button>
+
+    </div>
+    <div style="position: relative;left: -50px;">
+        <button id='btn_reset' class="my-btn-cls"  > reset </button>
+    </div>
+
+</div>
+
+
+<div id="text-status" style="margin-top: 32px;">...</div>
+
+<script type="text/javascript">
+
+//모바일이면 코도바 추가 시키기
+    if(mk.systeminfo.devicetype == "mobile") {
+
+        var fileref = document.createElement('script');
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("src","cordova.js" );
+
+        if (typeof fileref!="undefined")
+        {
+            document.getElementsByTagName("head")[0].appendChild(fileref);
+        }
+
+        $(fileref).on('load',function() {
+            console.log(' cordova.js load! success');
+        });
+    }
+
+    //저장소위치 정보
+    var theApp = {};
+
+    theApp.updater_info = {
+        updater_url : "http://localhost:80/dev",
+        repos : "titan.myprj.0001",
+        startup_file : '/home/index.html'
+    };
+
+    theApp.UIElements = {
+        textStatusInfo : document.querySelector('#text-status')
+    };
+
+
+    document.addEventListener("deviceready", function() {
+
+        console.log('device ready ok...!');
+
+        AppLauncher.Init({
+            repo_path : theApp.updater_info.repos,
+            successCB : function() {
+
+                checkUpdate();
+
+            },
+            errorCB : function() {
+
+            }
+        });
+
+
+
+    }, false);
+
+
+    function launchStartup() {
+
+        //startup_file = document.querySelector('#panel-config .startup-file').value;
+
+        console.log('test');
+        console.log(AppLauncher.Updater.fullPath + theApp.updater_info.startup_file);
+
+        //본 게임페이지 열기
+//            window.location.replace(App.Updater.fullPath+'/1.1.effect.html');
+
+        //뒤로가기 막기
+        //window.location.replace(AppLauncher.Updater.fullPath + startup_file);
+
+        //뒤로가기 가능
+        window.location = AppLauncher.Updater.fullPath + theApp.updater_info.startup_file;
+
+    }
+
+    function checkUpdate() {
+        AppLauncher.Updater.startUpdater(
+                theApp.updater_info.repos, //다운받을 디랙토리 이름 (실제 리소스가 저장될 위치)
+                theApp.updater_info.updater_url,
+                function() { //업데이트 완료
+                    console.log('success update ok!');
+
+                    theApp.UIElements.textStatusInfo.innerText = 'touch to start';
+
+                    document.getElementById('btn-grp').style.display = 'block';
+                    //launchStartup();
+                    //$('#text_info').text('finish update....ok');
+                    //$('#progress-bar-main .bar').css('width','100%');
+
+                },
+                function(evt) { //에러 발생 처리
+                    console.log('error code : ' + evt.target.error.code);
+                    //$('#text_info').text('error :' + evt.target.error.code );
+                },function(evt) {  //progressive, 파일 중간중간 다운로드 상태 알아보기
+
+                    if(evt.lengthComputable) {//파일크기를 알 수 있으면
+                        //$('#list-download').prepend($('<li></li>').text(evt.loaded+ '/' +  evt.total));
+                        var percentage = (evt.loaded / evt.total)*100;
+                        //$('#progress-bar-sub .bar').css('width', percentage + '%');
+                    }
+                    else {
+                        //파일크기 알수없으면 일단 1메가로 잡고 계산
+                        var percentage = (evt.loaded / 1000000)*100;
+
+                        if(percentage > 100) {
+                            percentage = 100;
+                        }
+
+                        //$('#progress-bar-sub .bar').css('width', percentage  + '%');
+                        //$('#list-download').prepend($('<li></li>').text(evt.loaded + '/' +  evt.total));
+                    }
+                },function(evt) { //각각 파일이 하나씩 다운로드 완료 될때마다 한번씩 콜백됨
+
+                    console.log('total : ' + evt.percent + '%');
+
+                    theApp.UIElements.textStatusInfo.innerText = 'update progress :' + evt.percent + '%(' + evt.fileame + ')';
+
+//                        $('#list-download').prepend($('<li></li>').text(evt.filename));
+                    //$('#progress-bar-main .bar').css('width',evt.percent + '%');
+                    //$('#text-status').text(evt.filename);
+                    //$('#list-download').prepend($('<li></li>').text(evt.percent));
+                }
+        );
+
+    }
+
+    (function () {
+
+        document.querySelector('#btn_launch').addEventListener('click',function() {
+
+            //checkUpdate();
+            launchStartup();
+
+        });
+
+        document.getElementById('btn_reset').addEventListener('click',function() {
+            AppLauncher.Updater.reset(repos);
+            theApp.UIElements.textStatusInfo.innerText = '앱을 다시 실행시키세요.';
+            //checkUpdate();
+        });
+
+    })();
+
+</script>
+
+
+</body>
+
+</html>
